@@ -1,0 +1,50 @@
+#!/bin/sh
+if test x"$1" = x"-h" -o x"$1" = x"--help" ; then
+echo "Usage: ./configure [options]"
+echo "  --help               print this message"
+echo "  --prefix=PREFIX      default:/usr/local"
+echo "  --bindir=BINDIR      default:$prefix/bin"
+echo ""
+exit 1
+fi
+
+if test ! -d ./libs
+then
+    echo there is no ./libs
+    echo see http://code.google.com/p/qqwry/
+    exit 1
+fi
+
+if test ! -f ./QQWry.Dat
+then
+    echo please download QQWry.Dat from http://code.google.com/p/qqwry/ 
+    exit 1
+fi
+
+prefix=/usr/local
+bindir='${prefix}/bin'
+
+
+# parse options
+
+for opt do
+    optarg="${opt#*=}"
+    case "$opt" in
+        --prefix=*)
+            prefix="$optarg"
+            ;;
+        --bindir=*)
+            bindir="$optarg"
+            ;;
+    esac
+done
+
+# generate config files
+
+cat > config.mak << EOF
+prefix=$prefix
+bindir=$bindir
+EOF
+echo 'configure successfully!!'
+echo 'nali will be installed on '$prefix/bin 
+echo 'please make && make install'

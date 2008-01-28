@@ -1,23 +1,19 @@
 #include <stdio.h>
 #include <string.h>
 #include <inttypes.h>
-#include "qqwry.h"
+#include "libs/qqwry.h"
 int main(int argc, char *argv[])
 {
-    if (argc != 3) {
+    if (argc != 2) {
         printf("Usage: nali <ip>\n");
         return 0;
     }
     
     char *ip=argv[1];
-    //char *wrt_path="QQWry.utf8.Dat";
-    char *wrt_path=argv[2];
+    char *wrt_path="/etc/QQWry.Dat";
     char country[1024]={'\0'};
     char area[1024]={'\0'};
 
-    //unsigned char test_ip[4] = {59,60,30,134};
-    //unsigned char test_ip[4] = {202,22,248,39};
-    //unsigned char test_ip[4] = {121,0,23,2};
     //char *test_ip2 = "127.0.0.1";
     //char *test_ip2 = "72.14.207.191";
     //char *test_ip2 = "121.0.23.2";

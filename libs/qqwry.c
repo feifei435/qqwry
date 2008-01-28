@@ -57,8 +57,6 @@ static uint32_t search_index(uint32_t ip,FILE *qqwrt_file) {
     uint32_t index_start,index_end,index_mid;
     index_start = (uint32_t)LE_32(&head[0]);
     index_end = (uint32_t)LE_32(&head[4]);
-    fprintf(stderr,"index_start:%u\n",index_start);
-    fprintf(stderr,"index_end:%u\n",index_end);
     while (1) {
         if ((index_end-index_start)==7) {
             break;
@@ -147,12 +145,12 @@ int qqwrt_get_location_by_long(char *country,char *area,uint32_t ip,char *wrt_pa
         return 0;
     }
     data_index = search_index(ip,qqwrt_file);
-    fprintf(stderr,"index:%u:%u\n",ftell(qqwrt_file),data_index);
+    //fprintf(stderr,"index:%u:%u\n",ftell(qqwrt_file),data_index);
 
     fseek(qqwrt_file,data_index+4,SEEK_SET);
     switch (c=fgetc(qqwrt_file)) {
         case REDIRECT_TYPE_1:
-    fprintf(stderr,"mod_1\n");
+    //fprintf(stderr,"mod_1\n");
             fread(data_index_bytes,3,1,qqwrt_file);
             data_index=LE_24(&data_index_bytes[0]);
             readOrJumpRead(country,qqwrt_file,data_index);
@@ -160,7 +158,7 @@ int qqwrt_get_location_by_long(char *country,char *area,uint32_t ip,char *wrt_pa
             readOrJumpRead(area,qqwrt_file,0);
             break;
         case REDIRECT_TYPE_2:
-    fprintf(stderr,"mod_2\n");
+    //fprintf(stderr,"mod_2\n");
             area_offset=data_index+8;
             fread(data_index_bytes,3,1,qqwrt_file);
 
@@ -173,23 +171,18 @@ int qqwrt_get_location_by_long(char *country,char *area,uint32_t ip,char *wrt_pa
             readOrJumpRead(area,qqwrt_file,area_offset);
             break;
         default:
-    fprintf(stderr,"mod_d\n");
+    //fprintf(stderr,"mod_d\n");
             country[strlen(country)]=c;
-    fprintf(stderr,"mod_ee\n");
             while (c=fgetc(qqwrt_file)) {
                 country[strlen(country)]=c;
             }
-    fprintf(stderr,"mod_hh\n");
-            //location[strlen(location)]=' ';
             while (c=fgetc(qqwrt_file)) {
                 area[strlen(area)]=c;
             }
     }
-    fprintf(stderr,"mod_xx\n");
     if (is_cz88(country)) {
         country[0]='\0';
     }
-    fprintf(stderr,"mod_yy\n");
     if (is_cz88(area)) {
         area[0]='\0';
     }
