@@ -77,10 +77,12 @@ PHP_METHOD(qqwry,q)
 			fp=qfl->fp;
 			break;
 		}
+		qfl=qfl->next;
 	}
 
 	if (!fp) {
 		qqwry_fp_list *pre_qfl=NULL;
+		qfl=QQWRY_G(fp_list);
 		while (qfl) {
 			pre_qfl=qfl;
 			qfl=qfl->next;
@@ -190,10 +192,13 @@ PHP_RINIT_FUNCTION(qqwry)
 PHP_RSHUTDOWN_FUNCTION(qqwry)
 {
     qqwry_fp_list *qfl=QQWRY_G(fp_list);
+    qqwry_fp_list *pre_qfl=NULL;
 	while (qfl) {
-		fclose(qfl->fp);
-		efree(qfl->filepath);
+		pre_qfl=qfl;
 		qfl=qfl->next;
+		fclose(pre_qfl->fp);
+		efree(pre_qfl->filepath);
+		efree(pre_qfl);
 	}
 	return SUCCESS;
 }

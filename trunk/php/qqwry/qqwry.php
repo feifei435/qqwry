@@ -1,32 +1,22 @@
 <?php
 $br = (php_sapi_name() == "cli")? "":"<br>";
-
 if(!extension_loaded('qqwry')) {
 	dl('qqwry.' . PHP_SHLIB_SUFFIX);
 }
-$a=new qqwry();
-var_dump($a->q('127.0.0.1','/Users/surfchen/projects/qqwry/nali/php/QQWry.Dat'));
-//var_dump($a);
-//$a->queryp('127.0.0.1','/Users/surfchen/projects/qqwry/nali/php/QQWry.Dat');
-exit;
-$module = 'qqwry';
-$functions = get_extension_funcs($module);
-$function =  $module ;
-list($s1,$s2)=qqwry('62.10.12.131','/Users/surfchen/projects/qqwry/nali/php/QQWry.Dat');
-echo $s1,$s2;
-var_dump($s2);
-exit;
-if (extension_loaded($module)) {
-echo "\n";
-	var_dump($function('183.213.101.3','/Users/surfchen/projects/qqwry/nali/php/QQWry.Dat'));
-exit;
-	var_dump($function('138.89.37.58','/Users/surfchen/projects/qqwry/nali/php/QQWry.Dat'));
-	var_dump($function('143.236.149.131','/Users/surfchen/projects/qqwry/nali/php/QQWry.Dat'));
-	var_dump($function('67.104.234.151','/Users/surfchen/projects/qqwry/nali/php/QQWry.Dat'));
-echo "\n";
-	var_dump($function('222.216.47.4','/Users/surfchen/projects/qqwry/nali/php/QQWry.Dat'));
-} else {
-	$str = "Module $module is not compiled into PHP";
-}
-echo "\n";
+$qqwry=new qqwry('/Users/surfchen/projects/qqwry/nali/php/QQWry.Dat');
+
+list($addr1,$addr2)=$qqwry->q('127.0.0.1');
+$addr1=iconv('GB2312','UTF-8',$addr1);
+$addr2=iconv('GB2312','UTF-8',$addr2);
+echo $addr1,'|',$addr2,"\n";
+
+$arr=$qqwry->q('222.216.47.4');
+$arr[0]=iconv('GB2312','UTF-8',$arr[0]);
+$arr[1]=iconv('GB2312','UTF-8',$arr[1]);
+echo $arr[0],'|',$arr[1],"\n";
+
+$arr=$qqwry->q('64.233.187.99');
+$arr[0]=iconv('GB2312','UTF-8',$arr[0]);
+$arr[1]=iconv('GB2312','UTF-8',$arr[1]);
+echo $arr[0],'|',$arr[1],"\n";
 ?>
