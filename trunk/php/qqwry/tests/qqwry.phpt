@@ -4,7 +4,7 @@ Check for qqwry presence
 <?php if (!extension_loaded("qqwry")) print "skip"; ?>
 --FILE--
 <?php 
-echo "qqwry extension is available";
+echo "need additional file before testing";
 /*
 	you can add regression tests for your extension here
 
@@ -18,4 +18,4 @@ echo "qqwry extension is available";
 */
 ?>
 --EXPECT--
-qqwry extension is available
+need additional file before testing
