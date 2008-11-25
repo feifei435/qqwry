@@ -40,17 +40,28 @@ PHP_RINIT_FUNCTION(qqwry);
 PHP_RSHUTDOWN_FUNCTION(qqwry);
 PHP_MINFO_FUNCTION(qqwry);
 
-PHP_FUNCTION(qqwry);	/* For testing, remove later. */
+PHP_METHOD(qqwry, __construct);
+ZEND_BEGIN_ARG_INFO_EX(qqwry____construct_args, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+PHP_METHOD(qqwry, q);
+ZEND_BEGIN_ARG_INFO_EX(qqwry__q_args, ZEND_SEND_BY_VAL, ZEND_RETURN_VALUE, 0)
+ZEND_END_ARG_INFO()
+
+typedef struct _qqwry_fp_list{
+	FILE *fp;
+	char *filepath;
+	struct _qqwry_fp_list* next;
+}qqwry_fp_list;
 
 /* 
   	Declare any global variables you may need between the BEGIN
 	and END macros here:     
+*/
 
 ZEND_BEGIN_MODULE_GLOBALS(qqwry)
-	long  global_value;
-	char *global_string;
+	qqwry_fp_list  *fp_list;
 ZEND_END_MODULE_GLOBALS(qqwry)
-*/
 
 /* In every utility function you add that needs to use variables 
    in php_qqwry_globals, call TSRMLS_FETCH(); after declaring other 

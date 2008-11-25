@@ -27,22 +27,106 @@
 #include "libqqwry.h"
 
 #define QQWRY_ADDR_LEN 128 
-/* If you declare any globals in php_qqwry.h uncomment this:
+
 ZEND_DECLARE_MODULE_GLOBALS(qqwry)
-*/
 
 /* True global resources - no need for thread safety here */
-static int le_qqwry;
+static zend_class_entry *qqwry_class_entry_ptr = NULL;
+
+/* {{{ proto string qqwry(string qqwry_path)
+*/
+PHP_METHOD(qqwry,__construct)
+{
+	char *qqwry_path = NULL;
+	int qqwry_len;
+    zval * _this_zval = NULL;
+    if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC,getThis(), "Os",&_this_zval,qqwry_class_entry_ptr, &qqwry_path,&qqwry_len) == FAILURE) {
+        return;
+    } 
+	add_property_string(_this_zval,"f",qqwry_path,1);
+}
+/* }}} */
+
+/* {{{ proto string q(string arg)
+   Return Array,of which the 1st value is addr1 and the 2nd value is addr2*/
+PHP_METHOD(qqwry,q)
+{
+	char *ip_string = NULL;
+	int ipstring_len;
+    zval * _this_zval = NULL;
+
+    if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC,getThis(), "Os",&_this_zval,qqwry_class_entry_ptr, &ip_string, &ipstring_len) == FAILURE) {
+        return;
+    }   
+	zval *zaddr1,*zaddr2;
+	char *addr1=(char *)emalloc(QQWRY_ADDR_LEN);
+	char *addr2=(char *)emalloc(QQWRY_ADDR_LEN);
+	memset(addr1,0,QQWRY_ADDR_LEN);
+	memset(addr2,0,QQWRY_ADDR_LEN);
+	zval **tmp;
+	char *qqwry_path;
+	if (zend_hash_find(Z_OBJPROP_P(_this_zval),"f",sizeof("f"),(void **)&tmp)==FAILURE) {
+		return;
+	}
+	qqwry_path=Z_STRVAL_PP(tmp);
+
+	FILE *fp=NULL;
+    qqwry_fp_list *qfl=QQWRY_G(fp_list);
+	while (qfl) {
+		if (!strcmp(qfl->filepath,qqwry_path)) {
+			fp=qfl->fp;
+			break;
+		}
+	}
+
+	if (!fp) {
+		qqwry_fp_list *pre_qfl=NULL;
+		while (qfl) {
+			pre_qfl=qfl;
+			qfl=qfl->next;
+		}
+		fp=fopen(qqwry_path,"rb");
+		qfl=emalloc(sizeof(qqwry_fp_list));
+		qfl->filepath = estrndup(qqwry_path, strlen(qqwry_path));
+		qfl->fp=fp;
+		qfl->next=NULL;
+		if (pre_qfl) {
+			pre_qfl->next=qfl;
+		} else {
+			QQWRY_G(fp_list)=qfl;
+		}
+	}
+
+	qqwry_get_location(addr1,addr2,ip_string,fp);
+	MAKE_STD_ZVAL(zaddr1);
+	ZVAL_STRING(zaddr1,addr1,0);
+	MAKE_STD_ZVAL(zaddr2);
+	ZVAL_STRING(zaddr2,addr2,0);
+
+	array_init(return_value);
+    add_next_index_zval(return_value,zaddr1);
+    add_next_index_zval(return_value,zaddr2);
+}
+/* }}} */
+
+
 
 /* {{{ qqwry_functions[]
- *
- * Every user visible function must have an entry in qqwry_functions[].
  */
 zend_function_entry qqwry_functions[] = {
-	PHP_FE(qqwry,	NULL)		/* For testing, remove later. */
 	{NULL, NULL, NULL}	/* Must be the last line in qqwry_functions[] */
 };
 /* }}} */
+
+/* {{{ qqwry_methods[]
+ */
+static zend_function_entry php_qqwry_class_functions[] = {
+	PHP_ME(qqwry, __construct, NULL, ZEND_ACC_PUBLIC)
+	PHP_ME(qqwry, q, NULL, ZEND_ACC_PUBLIC)
+	{NULL, NULL, NULL}	/* Must be the last line in qqwry_functions[] */
+};
+/* }}} */
+
 
 /* {{{ qqwry_module_entry
  */
@@ -68,34 +152,18 @@ zend_module_entry qqwry_module_entry = {
 ZEND_GET_MODULE(qqwry)
 #endif
 
-/* {{{ PHP_INI
- */
-/* Remove comments and fill if you need to have entries in php.ini
-PHP_INI_BEGIN()
-    STD_PHP_INI_ENTRY("qqwry.global_value",      "42", PHP_INI_ALL, OnUpdateLong, global_value, zend_qqwry_globals, qqwry_globals)
-    STD_PHP_INI_ENTRY("qqwry.global_string", "foobar", PHP_INI_ALL, OnUpdateString, global_string, zend_qqwry_globals, qqwry_globals)
-PHP_INI_END()
-*/
-/* }}} */
 
-/* {{{ php_qqwry_init_globals
- */
-/* Uncomment this function if you have INI entries
-static void php_qqwry_init_globals(zend_qqwry_globals *qqwry_globals)
-{
-	qqwry_globals->global_value = 0;
-	qqwry_globals->global_string = NULL;
-}
-*/
-/* }}} */
 
 /* {{{ PHP_MINIT_FUNCTION
  */
 PHP_MINIT_FUNCTION(qqwry)
 {
-	/* If you have INI entries, uncomment these lines 
-	REGISTER_INI_ENTRIES();
-	*/
+#ifdef ZTS
+    ZEND_INIT_MODULE_GLOBALS(qqwry,NULL,NULL);
+#endif
+    zend_class_entry qqwry_class_entry;
+    INIT_CLASS_ENTRY(qqwry_class_entry, "qqwry", php_qqwry_class_functions);
+	qqwry_class_entry_ptr = zend_register_internal_class(&qqwry_class_entry TSRMLS_CC);
 	return SUCCESS;
 }
 /* }}} */
@@ -104,27 +172,29 @@ PHP_MINIT_FUNCTION(qqwry)
  */
 PHP_MSHUTDOWN_FUNCTION(qqwry)
 {
-	/* uncomment this line if you have INI entries
-	UNREGISTER_INI_ENTRIES();
-	*/
 	return SUCCESS;
 }
 /* }}} */
 
-/* Remove if there's nothing to do at request start */
 /* {{{ PHP_RINIT_FUNCTION
  */
 PHP_RINIT_FUNCTION(qqwry)
 {
+    QQWRY_G(fp_list)=NULL;
 	return SUCCESS;
 }
 /* }}} */
 
-/* Remove if there's nothing to do at request end */
 /* {{{ PHP_RSHUTDOWN_FUNCTION
  */
 PHP_RSHUTDOWN_FUNCTION(qqwry)
 {
+    qqwry_fp_list *qfl=QQWRY_G(fp_list);
+	while (qfl) {
+		fclose(qfl->fp);
+		efree(qfl->filepath);
+		qfl=qfl->next;
+	}
 	return SUCCESS;
 }
 /* }}} */
@@ -136,48 +206,6 @@ PHP_MINFO_FUNCTION(qqwry)
 	php_info_print_table_start();
 	php_info_print_table_header(2, "qqwry support", "enabled");
 	php_info_print_table_end();
-
-	/* Remove comments if you have entries in php.ini
-	DISPLAY_INI_ENTRIES();
-	*/
-}
-/* }}} */
-
-
-/* Remove the following function when you have succesfully modified config.m4
-   so that your module can be compiled into PHP, it exists only for testing
-   purposes. */
-
-/* Every user-visible function in PHP should document itself in the source */
-/* {{{ proto string qqwry(string arg)
-   Return a string to confirm that the module is compiled in */
-PHP_FUNCTION(qqwry)
-{
-	char *ip_string = NULL;
-	char *qqwry_path = NULL;
-	int ipstring_len, qqwry_len;
-	char *strg;
-	int len;
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ss", &ip_string, &ipstring_len,&qqwry_path,&qqwry_len) == FAILURE) {
-		return;
-	}
-	zval *zaddr1,*zaddr2;
-	char *addr1=(char *)emalloc(QQWRY_ADDR_LEN);
-	char *addr2=(char *)emalloc(QQWRY_ADDR_LEN);
-	memset(addr1,0,QQWRY_ADDR_LEN);
-	memset(addr2,0,QQWRY_ADDR_LEN);
-
-	qqwry_get_location(addr1,addr2,ip_string,qqwry_path);
-	//len = spprintf(&strg, 0, "%s %s", addr1,addr2);
-	MAKE_STD_ZVAL(zaddr1);
-	ZVAL_STRING(zaddr1,addr1,0);
-	MAKE_STD_ZVAL(zaddr2);
-	ZVAL_STRING(zaddr2,addr2,0);
-
-	array_init(return_value);
-    add_next_index_zval(return_value,zaddr1);
-    add_next_index_zval(return_value,zaddr2);
 }
 /* }}} */
 /* The previous line is meant for vim and emacs, so it can correctly fold and 
