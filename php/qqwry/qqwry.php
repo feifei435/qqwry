@@ -4,6 +4,11 @@ $br = (php_sapi_name() == "cli")? "":"<br>";
 if(!extension_loaded('qqwry')) {
 	dl('qqwry.' . PHP_SHLIB_SUFFIX);
 }
+$a=new qqwry();
+var_dump($a->q('127.0.0.1','/Users/surfchen/projects/qqwry/nali/php/QQWry.Dat'));
+//var_dump($a);
+//$a->queryp('127.0.0.1','/Users/surfchen/projects/qqwry/nali/php/QQWry.Dat');
+exit;
 $module = 'qqwry';
 $functions = get_extension_funcs($module);
 $function =  $module ;

@@ -129,17 +129,16 @@ static int is_cz88(const char *str) {
     }
     return 0;
 }
-int qqwry_get_location_by_long(char *addr1,char *addr2,const uint32_t ip,const char *wrt_path) {
-    FILE *qqwry_file;
+int qqwry_get_location_by_long(char *addr1,char *addr2,const uint32_t ip,FILE *qqwry_file) {
     unsigned char data_index_bytes[3];
     uint32_t data_index;
     uint32_t addr2_offset;
     unsigned char c;
 
-    qqwry_file = fopen(wrt_path,"rb");
     if (!qqwry_file) {
         return 0;
     }
+    fseek(qqwry_file,0,SEEK_SET);
     data_index = search_index(ip,qqwry_file);
     //fprintf(stderr,"index:%u:%u\n",ftell(qqwry_file),data_index);
 
@@ -183,8 +182,7 @@ int qqwry_get_location_by_long(char *addr1,char *addr2,const uint32_t ip,const c
         addr2[0]='\0';
     }
     return 1;
-} 
-int qqwry_get_location(char *addr1,char *addr2,char *ip,char *wrt_path) {
-    qqwry_get_location_by_long(addr1,addr2,ip2long(ip),wrt_path);
-    return 1;
+}
+int qqwry_get_location(char *addr1,char *addr2,char *ip,FILE *qqwry_file) {
+    return qqwry_get_location_by_long(addr1,addr2,ip2long(ip),qqwry_file);
 }
