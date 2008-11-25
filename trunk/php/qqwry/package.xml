@@ -5,8 +5,8 @@ http://pear.php.net/dtd/package-2.0
 http://pear.php.net/dtd/package-2.0.xsd">
  <name>qqwry</name>
  <channel>pecl.php.net</channel>
- <summary>get IP location from QQWry</summary>
- <description>QQWry is a binary file contains ip-related locations information.This ext search it and get location information from it.
+ <summary>Get IP location from QQWry file</summary>
+ <description>QQWry is a binary file which contains ip-related locations information.This ext search it and get location information from it.
  </description>
  <lead>
   <name>Surf Chen</name>
