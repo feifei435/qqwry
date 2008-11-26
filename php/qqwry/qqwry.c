@@ -27,7 +27,8 @@
 #include "php_qqwry.h"
 #include "libqqwry.h"
 
-#define QQWRY_ADDR_LEN 128 
+#define QQWRY_ADDR1_LEN 64
+#define QQWRY_ADDR2_LEN 128 
 
 ZEND_DECLARE_MODULE_GLOBALS(qqwry)
 
@@ -60,10 +61,10 @@ PHP_METHOD(qqwry,q)
         return;
     }   
 	zval *zaddr1,*zaddr2;
-	char *addr1=(char *)emalloc(QQWRY_ADDR_LEN);
-	char *addr2=(char *)emalloc(QQWRY_ADDR_LEN);
-	memset(addr1,0,QQWRY_ADDR_LEN);
-	memset(addr2,0,QQWRY_ADDR_LEN);
+	char *addr1=(char *)emalloc(QQWRY_ADDR1_LEN);
+	char *addr2=(char *)emalloc(QQWRY_ADDR2_LEN);
+	memset(addr1,0,QQWRY_ADDR1_LEN);
+	memset(addr2,0,QQWRY_ADDR2_LEN);
 	zval **tmp;
 	char *qqwry_path;
 	if (zend_hash_find(Z_OBJPROP_P(_this_zval),"f",sizeof("f"),(void **)&tmp)==FAILURE) {
