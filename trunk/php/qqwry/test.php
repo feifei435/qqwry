@@ -3,11 +3,13 @@ if ($_SERVER['argc']<3) {
     usage();
 }
 define('QQWRY_PATH',$_SERVER['argv'][1]);
-define('QQWRY_PHP_LIB',$_SERVER['argv'][2]);
 if (!file_exists($_SERVER['argv'][1])) {
     usage();
 }
-require QQWRY_PHP_LIB;
+//tow implementations in native php language,
+//used them to compare and test extension
+require $_SERVER['argv'][2];
+
 $arr=array();
 for ($i=0;$i<500;$i++) {
     $arr[]=rand(0,255).'.'.rand(0,255).'.'.rand(0,255).'.'.rand(0,255);
