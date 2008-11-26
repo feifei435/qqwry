@@ -90,7 +90,7 @@ PHP_METHOD(qqwry,q)
 		}
 		fp=fopen(qqwry_path,"rb");
 		if (!fp) {
-			php_error_docref(NULL TSRMLS_CC, E_WARNING,strerror(errno));
+			php_error_docref(NULL TSRMLS_CC, E_WARNING,"%s",strerror(errno));
 			return;
 		}
 		qfl=emalloc(sizeof(qqwry_fp_list));
