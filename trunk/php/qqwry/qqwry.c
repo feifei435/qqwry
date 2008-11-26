@@ -20,6 +20,7 @@
 #include "config.h"
 #endif
 
+#include "errno.h"
 #include "php.h"
 #include "php_ini.h"
 #include "ext/standard/info.h"
@@ -42,7 +43,7 @@ PHP_METHOD(qqwry,__construct)
     zval * _this_zval = NULL;
     if (zend_parse_method_parameters(ZEND_NUM_ARGS() TSRMLS_CC,getThis(), "Os",&_this_zval,qqwry_class_entry_ptr, &qqwry_path,&qqwry_len) == FAILURE) {
         return;
-    } 
+    }
 	add_property_string(_this_zval,"f",qqwry_path,1);
 }
 /* }}} */
@@ -88,6 +89,10 @@ PHP_METHOD(qqwry,q)
 			qfl=qfl->next;
 		}
 		fp=fopen(qqwry_path,"rb");
+		if (!fp) {
+			php_error_docref(NULL TSRMLS_CC, E_WARNING,strerror(errno));
+			return;
+		}
 		qfl=emalloc(sizeof(qqwry_fp_list));
 		qfl->filepath = estrndup(qqwry_path, strlen(qqwry_path));
 		qfl->fp=fp;
