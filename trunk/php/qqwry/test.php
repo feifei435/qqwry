@@ -38,7 +38,6 @@ foreach ($arr as $ip) {
     $qqwry->q($ip);
 }
 $times[2]=microtime(true)-$t;
-var_dump($times);
 echo "测试结束\n";
 echo '是discuz的',$times[0]/$times[2],"倍\n";
 echo '是coolcode的',$times[1]/$times[2],"倍\n";
