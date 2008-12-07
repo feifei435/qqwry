@@ -25,7 +25,7 @@
 #include "php_ini.h"
 #include "ext/standard/info.h"
 #include "php_qqwry.h"
-#include "libqqwry.h"
+#include "libqqwry/qqwry.h"
 
 #define QQWRY_ADDR1_LEN 64
 #define QQWRY_ADDR2_LEN 128 
