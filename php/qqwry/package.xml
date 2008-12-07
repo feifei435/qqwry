@@ -36,8 +36,8 @@ http://pear.php.net/dtd/package-2.0.xsd">
    <file name="config.w32" role="src" />
    <file name="qqwry.c" role="src" />
    <file name="php_qqwry.h" role="src" />
-   <file name="libqqwry.c" role="src" />
-   <file name="libqqwry.h" role="src" />
+   <file name="libqqwry/qqwry.c" role="src" />
+   <file name="libqqwry/qqwry.h" role="src" />
    <file name="qqwry.php" role="doc" />
    <file name="LICENSE" role="doc" />
    <file name="INSTALL" role="doc" />

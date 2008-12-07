@@ -58,5 +58,5 @@ if test "$PHP_QQWRY" != "no"; then
   dnl
   dnl PHP_SUBST(QQWRY_SHARED_LIBADD)
 
-  PHP_NEW_EXTENSION(qqwry, qqwry.c libqqwry.c, $ext_shared)
+  PHP_NEW_EXTENSION(qqwry, qqwry.c libqqwry/qqwry.c, $ext_shared)
 fi
