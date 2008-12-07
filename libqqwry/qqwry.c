@@ -1,3 +1,12 @@
+/*
+ * Copyright 2008 Surf Chen <http://www.surfchen.org>
+ *
+ *
+ * This source code is under the terms of the
+ * GNU Lesser General Public License. 
+ * see <http://www.gnu.org/licenses/lgpl.txt>
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <inttypes.h>
