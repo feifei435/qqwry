@@ -1,2 +1,2 @@
 #!/bin/sh
-dig $@|nali
+dig $@ 2>&1|nali
