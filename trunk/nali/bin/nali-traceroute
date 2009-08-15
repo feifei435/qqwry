@@ -1,2 +1,2 @@
 #!/bin/sh
-traceroute $@|nali
+traceroute $@ 2>&1|nali
