@@ -4,25 +4,24 @@ echo "Usage: ./configure [options]"
 echo "  --help               print this message"
 echo "  --prefix=PREFIX      default:/usr/local"
 echo "  --bindir=BINDIR      default:$prefix/bin"
+echo "  --datadir=BINDIR      default:$prefix/share"
 echo ""
 exit 1
 fi
 
-if test ! -d ./libs
+if test ! -d ./libqqwry
 then
-    echo there is no ./libs
+    echo there is no ./libqqwry
     echo see http://code.google.com/p/qqwry/
     exit 1
 fi
 
-if test ! -f ./QQWry.Dat
+if test ! -f ./share/QQWry.Dat
 then
     echo please download QQWry.Dat from http://code.google.com/p/qqwry/ 
     exit 1
 fi
 
-prefix=/usr/local
-bindir='${prefix}/bin'
 
 
 # parse options
@@ -36,15 +35,50 @@ for opt do
         --bindir=*)
             bindir="$optarg"
             ;;
+        --datadir=*)
+            datadir="$optarg"
+            ;;
     esac
 done
+
+if test "z$prefix" = "z" 
+then
+    prefix=/usr/local
+fi
+
+if test "z$bindir" = "z" 
+then
+    bindir=${prefix}/bin
+fi
+
+if test "z$datadir" = "z" 
+then
+    datadir=${prefix}/share
+fi
+
 
 # generate config files
 
 cat > config.mak << EOF
 prefix=$prefix
 bindir=$bindir
+datadir=$datadir
 EOF
+
+cat > config.h << EOF
+#define NALI_QQWRY_PATH "$datadir/QQWry.Dat"
+EOF
+
+cat > bin/nali << EOF
+#!/bin/sh
+if test \$# -gt 0
+then
+    echo \$@|perl $datadir/nali.pl
+else
+    perl $datadir/nali.pl
+fi
+EOF
+
 echo 'configure successfully!!'
-echo 'nali will be installed on '$prefix/bin 
+echo 'nali will be installed on '$bindir
 echo 'please make && make install'
