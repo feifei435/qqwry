@@ -19,7 +19,7 @@ fi
 
 if test ! -f ./share/QQWry.Dat
 then
-    echo please download QQWry.Dat from http://code.google.com/p/qqwry/ 
+    echo please download QQWry.Dat from https://chenze.name/wenjian/QQWry.Dat 
     exit 1
 fi
 
@@ -81,20 +81,39 @@ qqwry_dat_url="https://chenze.name/wenjian/QQWry.Dat";
 qqwry_dat_local_path="$datadir/QQWry.Dat"
 curl=\`which curl\`
 wget=\`which wget\`
+
+if ! test -w \$qqwry_dat_local_path
+then
+    echo You may need sudo
+    exit 1
+fi
+
+if test -f /tmp/QQWry.Dat
+then
+    rm -f /tmp/QQWry.Dat || exit 1
+fi
+
 if test "x\$curl" != "x" &&  test -x \$curl 
 then
-    command="\$curl -k --compressed \$qqwry_dat_url -o \$qqwry_dat_local_path"
+    command="\$curl -k --compressed \$qqwry_dat_url -o /tmp/QQWry.Dat"
 elif test "x\$wget" != "x" &&  test -x \$wget
 then
-    command="\$wget --no-check-certificate \$qqwry_dat_url -O \$qqwry_dat_local_path"
+    command="\$wget --no-check-certificate \$qqwry_dat_url -O /tmp/QQWry.Dat"
 else
     echo Error: Please install curl or wget
     exit 1
 fi 
 echo Updating \$qqwry_dat_local_path
-\$command
+\$command && mv /tmp/QQWry.Dat \$qqwry_dat_local_path && echo Successfully Updated && exit 0
+
+echo Failed to update
+exit 1
 EOF
 
-echo 'configure successfully!!'
-echo 'nali will be installed on '$bindir
-echo 'please make && make install'
+echo '***** Configure Successfully *****'
+echo
+echo "Install:"
+echo 'make && make install'
+echo
+echo "Usage and Examples:";
+echo 'http://www.surfchen.org/wiki/Nali'
